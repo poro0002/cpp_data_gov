@@ -1,14 +1,44 @@
-file_content_index/
-# Ignore Visual Studio temporary files, build results, and
-# other directories and files created by popular Visual Studio add-ons.
-
-# User-specific files
-*.rsuser
+# Visual Studio specific
+.vscode/
+.vs/
+*.vcxproj.user
 *.suo
 *.user
-*.userosscache
-*.sln.docstates
-
-# User-specific files (Mono auto generated)
-mono_crash.*
+*.ipch
+*.obj
+*.pch
+*.idb
+*.pdb
+*.log
+*.tlog
+*.lastbuildstate
+*.sdf
+*.opensdf
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+*.psess
+*.vsp
+*.vspx
+*.tmp
+.vscode/
 .vs/
+
+# Build directories
+Debug/
+Release/
+x64/
+ARM64/
+x86/
+
+# CMake specific
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+Testing/
+Makefile
+cmake_install.cmake
+CTestTestfile.cmake
+
+# Submodule
+vcpkg/
