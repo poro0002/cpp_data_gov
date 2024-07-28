@@ -1,1 +1,14 @@
 file_content_index/
+# Ignore Visual Studio temporary files, build results, and
+# other directories and files created by popular Visual Studio add-ons.
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (Mono auto generated)
+mono_crash.*
+.vs/
