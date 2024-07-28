@@ -1,3 +1,0 @@
-C:\Users\Kiirynn\source\repos\data.gov_filter\ARM64\Debug\libcurl-d.dll
-C:\Users\Kiirynn\source\repos\data.gov_filter\ARM64\Debug\zlibd1.dll
-C:\Users\Kiirynn\source\repos\data.gov_filter\data.gov_filter\ARM64\Debug\data.gov.CD662F20.Up2Date
