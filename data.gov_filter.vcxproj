@@ -183,7 +183,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="data.gov_filter.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">C:\Users\Kieran\source\repos\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">C:\Users\Kiirynn\source\repos\vcpkg\installed\x64-windows\include;C:\Users\Kirynn\source\repos\data.gov_filter\rapidjson\include</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
