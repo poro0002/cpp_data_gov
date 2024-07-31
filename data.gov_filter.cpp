@@ -33,61 +33,67 @@ using json = nlohmann::json;
 
 // Callback function to handle data (if you want to process response data)
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+
     // Here you can handle the data received from the server
     size_t totalSize = size * nmemb;
+
+    // string* jsonResponse = (string*)userp; does not create a new variable; it simply casts the void* pointer (userp) to a string*
     string* jsonResponse = (string*)userp;
-    jsonResponse->append((char*)contents, totalSize);
+
+    // Append the received data to the string object pointed to by jsonResponse
+    jsonResponse->append((char*)contents, totalSize); 
+
+    //---<explanation>----
+    // so jsonResponse is a string pointer that is userp and then gets the direction to memory for the string that holds the jsondata 
+    
     return totalSize;
 }
 
 
-void printSalaries(const json& jsonData) {
-    if (jsonData.is_object()) {
-        // Print entire JSON structure for debugging
-        cout << "JSON Object: " << jsonData.dump(4) << endl;
+void searchJobByTitle(const json& jsonData, const string& jobTitle) {
 
+    cout << "json object: " << jsonData.dump(4) << endl;
+    
+    
+    if (jsonData.contains("data")) {
+        const auto& data = jsonData["data"];
 
-      
-     // this here below to access specific data from the json
-     // is basically the same thing in javascript ads example  "object.data[2].results.propteries"
-    // accessing the values 
+        if (data.is_array()) {
+            cout << "'data' is an array." << endl;
+        for (const auto& item : data) {
+            if (item.is_array() && item.size() > 8) {
+                string title = item[8].get<string>();  // for each peice of data it puts the "job title" into a title string variable
 
-       // nlohmann::json :  the contains("key") & jsonData.is_array()/item.is_object() & get<string>/get<type>
-        // RAPIDJSON     :  you would use document.HasMember("key") & document.IsArray()
-        
-        if (jsonData.contains("data") && jsonData["data"].is_array()) {
-            for (const auto& item : jsonData["data"]) {
-                if (item.is_object()) {
-                   
-                    string fieldName = item.contains("fieldName") ? item["fieldName"].get<string>() : "N/A";
-                    string name = item.contains("name") ? item["name"].get<string>() : "N/A";
-
-                
-                    cout << "Field Name: " << fieldName << ", Name: " << name << endl;
-
-                    // Extract and print the average base salary if available
-                    if (fieldName == "average_of_base_salary") {
-                        if (item.contains("value")) {
-                            double salary = item["value"].get<double>();
-                            cout << "Average Base Salary: $" << fixed << setprecision(2) << salary << endl;
-                        }
-                    }
+             // so this makes it so it will look to match the user string with the corrosponding match in the data
+                if (title.find(jobTitle) != string::npos) {
+                    // Print the details of the job if it matches
+                    cout << "Job Title: " << title << endl;
+                    cout << "Code: " << item[1].get<string>() << endl;
+                    cout << "Salary: " << item[11].get<string>() << endl;
+                    cout << "Grade: " << item[10].get<string>() << endl;
+                    cout << "Number: " << item[12].get<string>() << endl;
+                    cout << endl;
                 }
             }
         }
+    }
         else {
-            cout << "Expected array not found in JSON data." << endl;
+            cout << "'data' is not an array" << endl;
         }
     }
     else {
-        cout << "JSON data is not an object." << endl;
+        cout << "Does not contain 'data'" << endl;
     }
 }
+
 
 
 
 
 int main() {
+
+
+
     // Initialize CURL
     CURL* curl;
     CURLcode res;
@@ -98,10 +104,12 @@ int main() {
     if (curl == NULL) {
         cerr << "CURL initialization failed" << endl;
         return -1;
+
     }
 
    // set the URL to fetch from
-    curl_easy_setopt(curl, CURLOPT_URL, "https://data.montgomerycountymd.gov/api/views/48wg-fkab");
+ // Set the URL to fetch JSON data
+    curl_easy_setopt(curl, CURLOPT_URL, "https://data.montgomerycountymd.gov/api/views/48wg-fkab/rows.json?accessType=DOWNLOAD");
 
     struct curl_slist* headers = NULL; // no headers set
     // set custom headers
@@ -110,7 +118,7 @@ int main() {
 
     // httpheader applies custom headers
     // write function makes it so you can call a function within curl 
-    // writedata just applies the response data to the variable
+    // then, writedata just applies the "jsonResponse" data in the callback function to the variable readBuffer 
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -134,19 +142,19 @@ int main() {
     json jsonData;
     try {
         jsonData = json::parse(readBuffer);
+        cout << "Fetched data: " <<  jsonData.dump(4) << endl;
     }
     catch (const json::parse_error& e) {
         cerr << "JSON parse error: " << e.what() << endl;
         return -1;
     }
 
+    // Search for a specific job title
+    string jobTitle;
+    cout << "Enter the job title to search: ";
+    getline(cin, jobTitle);
+    searchJobByTitle(jsonData, jobTitle); // you will the the user input value to use with the search function, obvi you will need the json aswell
 
-    // Print the raw response to understand the structure
-/*    cout << "Raw Response: " << jsonData.dump(4) << endl;*/  // Pretty print with indent of 4 spaces
-
-
-     // Access and display specific parts of the JSON data with a seperate fucntion 
-    printSalaries(jsonData);
     
     return 0;
 }
